@@ -1,17 +1,14 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 import Header from './Header.jsx';
-import {getCallById, getAllCalls, archiveCallById, resetCallsToInitialState} from "./requests";
+import {getAllCalls } from "./requests";
 
 const App = () => {
+    const [calls, setCalls] = useState([]);
 
-    useEffect( () => {
-        getAllCalls()
-        getCallById(7834)
-        archiveCallById(7834)
-        getCallById(7834)
-        resetCallsToInitialState()
+    useEffect(  () => {
+        getAllCalls().then(calls => setCalls(calls))
     }, []);
 
 
@@ -19,6 +16,15 @@ const App = () => {
     <div className='container'>
       <Header/>
       <div className="container-view">Some activities should be here</div>
+        <div>
+            Activity
+            {calls.filter(c => !c.is_archived).map(c => <div className={'item'} key={c.id}>{c.from}</div>)}
+        </div>
+
+        <div>
+            Archived
+            {calls.filter(c => c.is_archived).map(c => <div className={'item'} style={{color: 'red'}} key={c.id}>{c.from}</div>)}
+        </div>
     </div>
   );
 };

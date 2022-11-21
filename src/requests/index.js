@@ -4,9 +4,9 @@ export const getAllCalls = () => {
 
     const createEndpoint = () => AIRCALL_ENDPOINT + "/activities"
 
-    fetch(createEndpoint())
+    return fetch(createEndpoint())
         .then((response) => response.json())
-        .then((data) => console.log(data));
+        .then((data) =>data);
 }
 
 export const getCallById = (id) => {
