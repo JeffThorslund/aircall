@@ -18,14 +18,14 @@ export const getCallById = (id) => {
         .then((data) => console.log(data));
 }
 
-export const archiveCallById = (id) => {
+export const archiveCallById = (id, newArchiveState) => {
     const createEndpoint = (id) => AIRCALL_ENDPOINT + "/activities/" + id
 
     const bodyData = {
-        is_archived: false
+        is_archived: newArchiveState
     }
 
-    fetch(createEndpoint(id), {
+    return fetch(createEndpoint(id), {
         method: "POST",
         body: JSON.stringify(bodyData),
         headers: {
@@ -33,7 +33,7 @@ export const archiveCallById = (id) => {
         },
     })
         .then((response) => response.json())
-        .then((data) => console.log(data));
+        .then((data) => data);
 }
 
 export const resetCallsToInitialState = () => {
