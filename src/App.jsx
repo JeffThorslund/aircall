@@ -4,12 +4,38 @@ import ReactDOM from "react-dom";
 import Header from "./Header.jsx";
 import { archiveCallById, getAllCalls } from "./requests";
 
-const App = () => {
+const useCalls = () => {
   const [calls, setCalls] = useState([]);
 
   useEffect(() => {
     getAllCalls().then((calls) => setCalls(calls));
   }, []);
+
+  const setUpdatedCallList = (id, newArchiveState) => {
+    return archiveCallById(id, newArchiveState).then((updatedCall) => {
+      const updatedCalls = calls.map((call) => {
+        if (updatedCall.id === call.id) {
+          return updatedCall;
+        }
+
+        return call;
+      });
+
+      setCalls(updatedCalls);
+    });
+  };
+
+  return {
+    calls,
+    methods: {
+      archive: (id) => setUpdatedCallList(id, true),
+      unarchive: (id) => setUpdatedCallList(id, false),
+    },
+  };
+};
+
+const App = () => {
+  const { calls, methods } = useCalls();
 
   return (
     <div className="container">
@@ -21,11 +47,7 @@ const App = () => {
           .filter((c) => !c.is_archived)
           .map((c) => (
             <div
-              onClick={() => {
-                archiveCallById(c.id, true).then(() => {
-                  getAllCalls().then((calls) => setCalls(calls));
-                });
-              }}
+              onClick={() => methods.archive(c.id)}
               className={"item"}
               key={c.id}
             >
@@ -41,11 +63,7 @@ const App = () => {
           .map((c) => (
             <div
               className={"item"}
-              onClick={() =>
-                archiveCallById(c.id, false).then(() => {
-                  getAllCalls().then((calls) => setCalls(calls));
-                })
-              }
+              onClick={() => methods.unarchive(c.id)}
               style={{ color: "red" }}
               key={c.id}
             >
